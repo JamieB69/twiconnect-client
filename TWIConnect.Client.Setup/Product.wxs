@@ -6,13 +6,19 @@
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
 
 		<!--<MajorUpgrade DowngradeErrorMessage="A newer version of 'TWIConnect.Client' is already installed." />-->
-		<MediaTemplate />
+  <MediaTemplate/>
 
 		<Feature Id="ProductFeature" Title="TWIConnectV2.Client.Setup" Level="1">
 			<ComponentGroupRef Id="ProductComponents" />
 		</Feature>
  
 		<PropertyRef Id="NETFRAMEWORK40CLIENT"/>
+    
+    <Property Id="CONFIG_XML">
+      <DirectorySearch Id="SOURCEDIR_SEARCH" Path="[SourceDir]" Depth="0">
+        <FileSearch Id="CONFIG_XML_SEARCH" Name="Configuration.xml" />
+      </DirectorySearch>
+    </Property>
         
 		<Condition Message="This application requires .NET Framework 4.0. Please install the .NET Framework then run this installer again.">
             <![CDATA[Installed OR NETFRAMEWORK40CLIENT]]>
@@ -46,11 +52,16 @@
         <File Id="Configuration.xml" 
               Name="Configuration.xml" 
               Source="..\$(var.TWIConnect.Client.Service.ProjectName)\bin\$(var.TWIConnect.Client.Service.Configuration)\Configuration.xml"
-              Vital="yes" 
+              Vital="no" 
               KeyPath="yes"
               DiskId="1" />
+      <Condition>NOT CONFIG_XML</Condition>
 			</Component>
-        
+
+      <Component Id="Custom_Config_XML" Guid="7A6B6DC4-FB83-4CA1-BB6F-1BF48E668F0A">
+        <CopyFile Id="CopyXMLFile" DestinationProperty="INSTALLFOLDER" SourceProperty="SOURCEDIR" SourceName="Configuration.xml" Delete="no" />
+      </Component>
+      
       <Component>
         <File Id="NLog.dll" 
               Name="NLog.dll" 
